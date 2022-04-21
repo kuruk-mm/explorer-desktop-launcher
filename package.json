@@ -67,7 +67,8 @@
     "win": {
       "icon": "public/app-icon.png",
       "target": [
-        "nsis"
+        "nsis",
+        "appx"
       ],
       "signingHashAlgorithms": [
         "sha256"
