@@ -108,7 +108,7 @@
     },
     "publish": {
       "provider": "github",
-      "owner": "decentraland",
+      "owner": "kuruk-mm",
       "repo": "explorer-desktop-launcher",
       "private": false
     }
