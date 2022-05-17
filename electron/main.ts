@@ -81,27 +81,30 @@ if (getOSName() === 'windows') {
 }
 
 const checkUpdates = async (win: BrowserWindow): Promise<void> => {
-  if (getOSName() === 'mac' && false) {
-    await loadDecentralandWeb(win) // Skip auto update on Mac
-  } else {
-    try {
-      const result = await autoUpdater.checkForUpdatesAndNotify()
-      console.log('Result:', result)
-      if (result === null || !result.downloadPromise) {
-        await loadDecentralandWeb(win)
-      } else {
-        if (result.downloadPromise) {
-          await result.downloadPromise
+  try {
+    const result = await autoUpdater.checkForUpdatesAndNotify()
+    console.log('Result:', result)
+    if (result === null || !result.downloadPromise) {
+      await loadDecentralandWeb(win)
+    } else {
+      if (getOSName() === 'mac') {
+        // No updates in Mac until we signed the executable
+        await loadDecentralandWeb(win) // Load decentraland web to report the error
+        await reportFatalError(
+          win.webContents,
+          "You're using an old version of Decentraland Desktop. Please update it from https://github.com/decentraland/explorer-desktop-launcher/releases"
+        )
+      } else if (result.downloadPromise) {
+        await result.downloadPromise
 
-          console.log('Download completed')
-          const silent = process.platform === 'darwin' // Silent=true only on Mac
-          autoUpdater.quitAndInstall(silent, true)
-        }
+        console.log('Download completed')
+        const silent = process.platform === 'darwin' // Silent=true only on Mac
+        autoUpdater.quitAndInstall(silent, true)
       }
-    } catch (err) {
-      console.error(`Check Updates error: ${err}`)
-      await loadDecentralandWeb(win) // Load current version anyway
     }
+  } catch (err) {
+    console.error(`Check Updates error: ${err}`)
+    await loadDecentralandWeb(win) // Load current version anyway
   }
   return Promise.resolve()
 }
