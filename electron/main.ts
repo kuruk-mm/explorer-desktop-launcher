@@ -1,6 +1,6 @@
 import { shell, app, BrowserWindow, ipcMain, Tray, Menu } from 'electron'
 import * as isDev from 'electron-is-dev'
-import { getOSName, getFreePort } from './updater'
+import { getOSName, getFreePort, reportFatalError } from './updater'
 import { exit } from 'process'
 import { autoUpdater } from 'electron-updater'
 import { parseConfig } from './cmdParser'
@@ -81,14 +81,14 @@ if (getOSName() === 'windows') {
 }
 
 const checkUpdates = async (win: BrowserWindow): Promise<void> => {
-  if (getOSName() === 'mac') {
-    loadDecentralandWeb(win) // Skip auto update on Mac
+  if (getOSName() === 'mac' && false) {
+    await loadDecentralandWeb(win) // Skip auto update on Mac
   } else {
     try {
       const result = await autoUpdater.checkForUpdatesAndNotify()
       console.log('Result:', result)
       if (result === null || !result.downloadPromise) {
-        loadDecentralandWeb(win)
+        await loadDecentralandWeb(win)
       } else {
         if (result.downloadPromise) {
           await result.downloadPromise
@@ -100,7 +100,7 @@ const checkUpdates = async (win: BrowserWindow): Promise<void> => {
       }
     } catch (err) {
       console.error(`Check Updates error: ${err}`)
-      loadDecentralandWeb(win) // Load current version anyway
+      await loadDecentralandWeb(win) // Load current version anyway
     }
   }
   return Promise.resolve()
@@ -169,9 +169,9 @@ const startApp = async (): Promise<void> => {
     loadDecentralandWeb(win)
   })
 
-  if (!main.config.developerMode && !main.config.previewMode) {
-    await checkUpdates(win)
-  }
+  //if (!main.config.developerMode && !main.config.previewMode) {
+  await checkUpdates(win)
+  //}
 
   return Promise.resolve()
 }

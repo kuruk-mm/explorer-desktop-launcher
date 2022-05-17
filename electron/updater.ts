@@ -129,7 +129,7 @@ const getPlayerLog = (): string => {
   }
 }
 
-const reportFatalError = async (sender: WebContents, message: string) => {
+export const reportFatalError = async (sender: WebContents, message: string) => {
   try {
     const code = `ReportFatalError(new Error(${JSON.stringify(message)}), 'renderer#errorHandler')`
     console.log(code)
