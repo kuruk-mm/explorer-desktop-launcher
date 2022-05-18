@@ -55,6 +55,16 @@ export const loadDefaultWeb = async (win: BrowserWindow) => {
   await win.loadURL(`file://${__dirname}/../../public/index.html#v${app.getVersion()}`)
 }
 
+export const reportLauncherError = async (win: BrowserWindow, message: string) => {
+  await win.loadURL(`file://${__dirname}/../../public/error.html`)
+
+  try {
+    await win.webContents.executeJavaScript(`document.getElementById("error").innerHTML = "${message}"`)
+  } catch (e) {
+    console.error(`ReportLauncherError error ${e}`)
+  }
+}
+
 export const checkDeveloperConsole = (win: BrowserWindow) => {
   if (isDev || main.config.developerMode) {
     win.webContents.openDevTools({ mode: 'detach' })

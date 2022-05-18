@@ -5,7 +5,14 @@ import { exit } from 'process'
 import { autoUpdater } from 'electron-updater'
 import { parseConfig } from './cmdParser'
 import { getAppTitle } from './helpers'
-import { createWindow, hideWindowInTray, loadDecentralandWeb, onOpenUrl, showWindowAndHideTray } from './window'
+import {
+  createWindow,
+  hideWindowInTray,
+  loadDecentralandWeb,
+  onOpenUrl,
+  reportLauncherError,
+  showWindowAndHideTray
+} from './window'
 import { LauncherConfig, LauncherPaths } from './types'
 import { isTrustedCertificate } from './certificateChecker'
 
@@ -91,17 +98,17 @@ const checkUpdates = async (win: BrowserWindow): Promise<void> => {
       console.log('Mac Result:', result)
 
       if (currentVersion !== lastVersion) {
-        console.log('New version detected')
-        ipcMain.once('checkVersion', async (event) => {
-          console.log('Report fatal error')
-          await reportFatalError(
-            event.sender,
-            "You're using an old version of Decentraland Desktop. Please update it from https://github.com/decentraland/explorer-desktop-launcher/releases"
-          )
-        })
+        const macDownloadUrl =
+          'https://github.com/decentraland/explorer-desktop-launcher/releases/latest/download/Decentraland.dmg'
+        await reportLauncherError(
+          win,
+          `You're using an old version of Decentraland Desktop (${currentVersion}).
+          Please update it manually from
+          <a href='${macDownloadUrl}'>${macDownloadUrl}</a>`
+        )
+      } else {
+        await loadDecentralandWeb(win) // Load decentraland web to report the error
       }
-
-      await loadDecentralandWeb(win) // Load decentraland web to report the error
     } else {
       const result = await autoUpdater.checkForUpdatesAndNotify()
       console.log('Result:', result)
