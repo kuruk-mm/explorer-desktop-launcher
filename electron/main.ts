@@ -84,13 +84,15 @@ const checkUpdates = async (win: BrowserWindow): Promise<void> => {
   try {
     if (getOSName() === 'mac') {
       // No updates in Mac until we signed the executable
-      console.log('Current version', autoUpdater.currentVersion)
+      const currentVersion = autoUpdater.currentVersion.version
       autoUpdater.autoDownload = false
-      const result = await autoUpdater.checkForUpdatesAndNotify()
+      const result = await autoUpdater.checkForUpdates()
+      const lastVersion = result.updateInfo.version
       console.log('Mac Result:', result)
-      if (result !== null) {
-        await loadDecentralandWeb(win) // Load decentraland web to report the error
+      await loadDecentralandWeb(win) // Load decentraland web to report the error
+      if (currentVersion !== lastVersion) {
         ipcMain.once('checkVersion', async (event) => {
+          console.log('Report fatal error')
           await reportFatalError(
             event.sender,
             "You're using an old version of Decentraland Desktop. Please update it from https://github.com/decentraland/explorer-desktop-launcher/releases"
