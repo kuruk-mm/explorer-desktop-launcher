@@ -89,8 +89,9 @@ const checkUpdates = async (win: BrowserWindow): Promise<void> => {
       const result = await autoUpdater.checkForUpdates()
       const lastVersion = result.updateInfo.version
       console.log('Mac Result:', result)
-      await loadDecentralandWeb(win) // Load decentraland web to report the error
+
       if (currentVersion !== lastVersion) {
+        console.log('New version detected')
         ipcMain.once('checkVersion', async (event) => {
           console.log('Report fatal error')
           await reportFatalError(
@@ -99,6 +100,8 @@ const checkUpdates = async (win: BrowserWindow): Promise<void> => {
           )
         })
       }
+
+      await loadDecentralandWeb(win) // Load decentraland web to report the error
     } else {
       const result = await autoUpdater.checkForUpdatesAndNotify()
       console.log('Result:', result)
