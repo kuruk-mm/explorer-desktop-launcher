@@ -84,10 +84,11 @@ const checkUpdates = async (win: BrowserWindow): Promise<void> => {
   try {
     if (getOSName() === 'mac') {
       // No updates in Mac until we signed the executable
+      console.log('Current version', autoUpdater.currentVersion)
       autoUpdater.autoDownload = false
-      const result = await autoUpdater.checkForUpdates()
+      const result = await autoUpdater.checkForUpdatesAndNotify()
       console.log('Mac Result:', result)
-      if (result.downloadPromise != null) {
+      if (result !== null) {
         await loadDecentralandWeb(win) // Load decentraland web to report the error
         ipcMain.once('checkVersion', async (event) => {
           await reportFatalError(
