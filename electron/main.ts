@@ -104,7 +104,7 @@ const checkUpdates = async (win: BrowserWindow): Promise<void> => {
           win,
           `You're using an old version of Decentraland Desktop (${currentVersion}).
           Please update it manually from
-          <a href='${macDownloadUrl}'>${macDownloadUrl}</a>`
+          <a target="_blank" href='${macDownloadUrl}'>${macDownloadUrl}</a>`
         )
       } else {
         await loadDecentralandWeb(win) // Load decentraland web to report the error

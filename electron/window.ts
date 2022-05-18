@@ -58,11 +58,7 @@ export const loadDefaultWeb = async (win: BrowserWindow) => {
 export const reportLauncherError = async (win: BrowserWindow, message: string) => {
   await win.loadURL(`file://${__dirname}/../../public/error.html`)
 
-  try {
-    await win.webContents.executeJavaScript(`document.getElementById("error").innerHTML = "${message}"`)
-  } catch (e) {
-    console.error(`ReportLauncherError error ${e}`)
-  }
+  win.webContents.send('setError', { error: message })
 }
 
 export const checkDeveloperConsole = (win: BrowserWindow) => {

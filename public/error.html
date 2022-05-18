@@ -27,6 +27,14 @@
       background-color: #000;
     }
 
+    a {
+      color: #fff;
+    }
+
+    a:visited {
+      background-color: #fff;
+    }
+
     .flex-container {
       width: 100%;
       height: 100%;
@@ -45,7 +53,7 @@
       flex-basis: auto;
       align-self: auto;
       order: 0;
-      padding-right: 30px; /* this */
+      padding: 30px;
     }
 
     .flex-items:nth-child(2) {
@@ -55,6 +63,7 @@
       flex-basis: auto;
       align-self: auto;
       order: 0;
+      padding-right: 30px;
     }
     img {
       max-height:330px;
@@ -75,7 +84,10 @@
     </div>
   </div>
   <script>
-
+    const ipcRenderer = window.electron.ipcRenderer
+    ipcRenderer.on('setError', (event, { error }) => {
+      document.getElementById("error").innerHTML = error
+    })
   </script>
 </body>
 
