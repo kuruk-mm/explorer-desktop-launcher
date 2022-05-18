@@ -1,6 +1,6 @@
 import { shell, app, BrowserWindow, ipcMain, Tray, Menu } from 'electron'
 import * as isDev from 'electron-is-dev'
-import { getOSName, getFreePort, reportFatalError } from './updater'
+import { getOSName, getFreePort } from './updater'
 import { exit } from 'process'
 import { autoUpdater } from 'electron-updater'
 import { parseConfig } from './cmdParser'
