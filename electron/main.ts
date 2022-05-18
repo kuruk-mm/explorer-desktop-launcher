@@ -82,19 +82,25 @@ if (getOSName() === 'windows') {
 
 const checkUpdates = async (win: BrowserWindow): Promise<void> => {
   try {
-    const result = await autoUpdater.checkForUpdatesAndNotify()
-    console.log('Result:', result)
-    if (result === null || !result.downloadPromise) {
-      await loadDecentralandWeb(win)
-    } else {
-      if (getOSName() === 'mac') {
+    if (getOSName() === 'mac') {
+      const result = await autoUpdater.checkForUpdates()
+      console.log('Result:', result)
+      if (result.downloadPromise) {
         // No updates in Mac until we signed the executable
         await loadDecentralandWeb(win) // Load decentraland web to report the error
-        await reportFatalError(
-          win.webContents,
-          "You're using an old version of Decentraland Desktop. Please update it from https://github.com/decentraland/explorer-desktop-launcher/releases"
-        )
-      } else if (result.downloadPromise) {
+        ipcMain.once('checkVersion', async (event) => {
+          await reportFatalError(
+            event.sender,
+            "You're using an old version of Decentraland Desktop. Please update it from https://github.com/decentraland/explorer-desktop-launcher/releases"
+          )
+        })
+      }
+    } else {
+      const result = await autoUpdater.checkForUpdatesAndNotify()
+      console.log('Result:', result)
+      if (result === null || !result.downloadPromise) {
+        await loadDecentralandWeb(win)
+      } else {
         await result.downloadPromise
 
         console.log('Download completed')
